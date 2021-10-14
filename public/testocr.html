@@ -1,0 +1,16 @@
+<script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
+
+<script>
+Tesseract.recognize(
+  'test.png',
+  'eng',
+  { logger: m => console.log(m) }
+).then(({ data: { text } }) => {
+  console.log("------");
+  console.log(text);
+  console.log("------");
+})
+
+</script>
+
+<img src="test.png">

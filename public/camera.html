@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!-- 参考URL https://blog.katsubemakito.net/html5/camera1 -->
+<html>
+<head>
+    <script type="text/javascript" src="scripts/camera.js"></script>
+    <meta charset="UTF-8">
+  <title>Camera Test</title>
+  <style>
+  canvas, video{
+    border: 1px solid gray;
+  }
+  </style>
+</head>
+<body>
+
+<h1>HTML5カメラ</h1>
+
+<video id="camera" width="300" height="200"></video>
+<form>
+    <button type="button" id="shutter">シャッター</button>
+    <button type="button" id="render" onclick="rendering()">レンダリング</button>
+    <button type="button" id="doorc" onclick="doocr()">OCR</button>
+</form>
+
+<audio id="se" preload="auto">
+  <source src="camera-shutter1.mp3" type="audio/mp3">
+</audio>
+
+</div>
+<div>
+    <table cellpadding="0" cellspacing="0" width="0" border="0">
+        <tr>
+            <td>
+                <div class="caption">シャッター</div>
+            </td>
+            <td>
+                <div class="caption">ハフ変換</div>
+            </td>
+            <td>
+                <div class="caption">矩形選択</div>
+            </td>
+            <td>
+                <div class="caption">切取り</div>
+            </td>
+            <td>
+                <div class="caption">2値化</div>
+            </td>
+        </tr>
+        <tr>
+        <td>
+            <canvas id="canvasInput"width="300" height="200" style="width:300px;height:200px"></canvas>
+        </td>
+        <td>
+            <canvas id="canvasOutput1"width="300" height="200" style="width:300px;height:200px"></canvas>
+        </td>
+        <td>
+            <canvas id="canvasOutput2"width="300" height="200" style="width:300px;height:200px"></canvas>
+        </td>
+        <td>
+            <canvas id="canvasOutput3"></canvas>
+        </td>
+        <td>
+            <canvas id="canvasOutput4"></canvas>
+        </td>
+        <td>
+            <textarea id="ocrOutput" width="300" height="200"></textarea>
+        </td>
+
+    </tr>
+    </table>
+</div>
+<p id="status">OpenCV.js is loading...</p>
+
+<script type="text/javascript" src="scripts/render.js"></script>
+<script async src="scripts/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+<script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
+<script type="text/javascript" src="scripts/ocr.js"></script>
+
+<style type="text/css">
+
+    textarea {
+    width: 300px;
+    height: 7em;
+    }
+    
+    </style>
+</body>
+</html>
