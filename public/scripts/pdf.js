@@ -49,7 +49,24 @@ canvasLayerElement.addEventListener('mousemove', (e) =>{
         draw(canvasLayerElement,e.offsetX,e.offsetY);
     }
 }, false);
-
+canvas.addEventListener("touchstart", (e) =>{
+    startX=e.offsetX;
+    startY=e.offsetY;
+    onMouse=true;
+}, false);
+canvas.addEventListener("touchend", (e) =>{
+    endX=e.offsetX;
+    endY=e.offsetY;
+    onMouse=false;
+    draw(canvasLayerElement,endX,endY);
+    copySelectedArea();
+    ocr();
+}, false);
+canvasLayerElement.addEventListener('touchmove', (e) =>{
+    if(onMouse==true){
+        draw(canvasLayerElement,e.offsetX,e.offsetY);
+    }
+}, false);
 
 /**
  * 四角形描画用処理
