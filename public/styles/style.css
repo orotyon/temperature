@@ -1,0 +1,23 @@
+canvas{
+    border-color:black;
+}
+body{
+    background-color: burlywood;
+}
+
+.canvas-wrapper {
+    position: relative;
+}
+.canvas-wrapper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.ocr-wrapper{
+    display:flex;
+}
+.ocroutput-wrapper{
+    display:flex;
+    flex-direction: column;
+}
