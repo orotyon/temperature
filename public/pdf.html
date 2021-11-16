@@ -14,17 +14,21 @@
     <div class="caption"><input type="file" id="fileInput" name="file" /></div>
     <!-- OCR用 -->
     <div class="ocr-wrapper">
-        <canvas id="canvasSelected"></canvas>
         <div class="ocroutput-wrapper">
-            <progress value="0.0"max="1"id="progressOCR"></progress>
+            <input type="button" value="OCR実行" onclick="executeOCR()">
             <textarea name="ocrOutput" id="textareaOutput" cols="60" rows="5"></textarea>
+            <progress value="0.0"max="1"id="progressOCR"></progress>
         </div>
+        <div id="ocrselected-list"></div>
     </div>
     <hr>
     <div class="canvas-wrapper">
         <!-- 選択領域 -->
         <canvas id="canvasOutput"></canvas>
         <canvas id="canvasLayer1"></canvas>
+    </div>
+    <div class="ocr-selecter">
+        a
     </div>
 
     <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>

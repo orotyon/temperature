@@ -2,9 +2,9 @@ const imgElement = document.getElementById("imageSrc");
 const inputElement = document.getElementById("fileInput");
 const canvasElement = document.getElementById("canvasOutput");
 const canvasLayerElement = document.getElementById("canvasLayer1");
-const canvasSelectedElement = document.getElementById("canvasSelected");
 const textareaElement = document.getElementById("textareaOutput");
 const progressOCRElement = document.getElementById("progressOCR");
+const selectedDivElement = document.getElementById("ocrselected-list");
 
 let startX;
 let startY;
@@ -12,7 +12,52 @@ let endX;
 let endY;
 let onMouse=false;
 
+const canvasPoints = [];
+const canvasSelectedElements = [];
 
+/**
+ * 座標を登録するためのコンストラクタ
+ */
+function canvasPoint(_startX,_startY,_endX,_endY){
+    if(_startX<_endX){
+        this.startX=_startX;
+        this.endX=_endX;
+    }
+    else{
+        this.startX=_endX;
+        this.endX=_startX;
+    }
+    if(_startY<_endY){
+        this.startY=_startY;
+        this.endY=_endY;
+    }
+    else{
+        this.startY=_endY;
+        this.endY=_startY;
+    }
+    this.toX=this.endX-this.startX;
+    this.toY=this.endY-this.startY;
+}
+
+/**
+ * キャンバス作成
+ */
+function createCanvasSelectedElement(point){
+    let src = cv.imread('canvasOutput');
+    let dst = new cv.Mat();
+    // 矩形選択
+    let rect = new cv.Rect(point.startX,point.startY,point.toX,point.toY);
+    dst = src.roi(rect);
+    this.mem_canvas = document.createElement("canvas");
+    this.mem_canvas.width = point.toX;
+    this.mem_canvas.height = point.toY;
+    cv.imshow(this.mem_canvas, dst);
+    src.delete();
+    dst.delete();
+    canvasSelectedElements.push(mem_canvas);
+    // なんかエラーになる
+    // selectedDivElement.appendChild(mem_canvas);
+}
 
 inputElement.addEventListener("change", (e) =>{
     imgElement.src=URL.createObjectURL(e.target.files[0]);
@@ -41,32 +86,35 @@ canvasLayerElement.addEventListener('mouseup', (e) =>{
     endY=e.offsetY;
     onMouse=false;
     draw(canvasLayerElement,endX,endY);
-    copySelectedArea();
-    ocr();
+    point=new canvasPoint(startX,startY,endX,endY);
+    createCanvasSelectedElement(point);
+    canvasPoints.push(point);
+    // copySelectedArea()
+    // ocr();
 }, false);
 canvasLayerElement.addEventListener('mousemove', (e) =>{
     if(onMouse==true){
         draw(canvasLayerElement,e.offsetX,e.offsetY);
     }
 }, false);
-canvas.addEventListener("touchstart", (e) =>{
-    startX=e.offsetX;
-    startY=e.offsetY;
-    onMouse=true;
-}, false);
-canvas.addEventListener("touchend", (e) =>{
-    endX=e.offsetX;
-    endY=e.offsetY;
-    onMouse=false;
-    draw(canvasLayerElement,endX,endY);
-    copySelectedArea();
-    ocr();
-}, false);
-canvasLayerElement.addEventListener('touchmove', (e) =>{
-    if(onMouse==true){
-        draw(canvasLayerElement,e.offsetX,e.offsetY);
-    }
-}, false);
+// canvas.addEventListener("touchstart", (e) =>{
+//     startX=e.offsetX;
+//     startY=e.offsetY;
+//     onMouse=true;
+// }, false);
+// canvas.addEventListener("touchend", (e) =>{
+//     endX=e.offsetX;
+//     endY=e.offsetY;
+//     onMouse=false;
+//     draw(canvasLayerElement,endX,endY);
+//     copySelectedArea();
+//     ocr();
+// }, false);
+// canvasLayerElement.addEventListener('touchmove', (e) =>{
+//     if(onMouse==true){
+//         draw(canvasLayerElement,e.offsetX,e.offsetY);
+//     }
+// }, false);
 
 /**
  * 四角形描画用処理
@@ -75,32 +123,43 @@ function draw(element,x,y){
 	let context=element.getContext('2d');
     context.clearRect(0,0,element.width,element.height);
 	context.strokeStyle='#FF0000';
-	context.strokeRect(startX,startY,x-startX,y-startY); 
+    for(i=0;i<canvasPoints.length;i++){
+        // 設定済みの四角形
+        context.strokeRect(canvasPoints[i].startX,canvasPoints[i].startY,canvasPoints[i].toX,canvasPoints[i].toY);
+    }
+    // 描画中の四角形
+	context.strokeRect(startX,startY,x-startX,y-startY);
 }
 
-/**
- * 選択領域をOCR用canvasにコピー
- */
-function copySelectedArea(){
-    let src = cv.imread('canvasOutput');
-    let dst = new cv.Mat();
+// /**
+//  * 選択領域をOCR用canvasにコピー
+//  */
+// function copySelectedArea(point){
+//     let src = cv.imread('canvasOutput');
+//     let dst = new cv.Mat();
 
-    // スタート座標と、そこからの距離を指定する必要があるるので計算
-    if(startX>endX){let tmpX=endX;endX=startX;startX=tmpX;}
-    if(startY>endY){let tmpY=endY;endY=startY;startY=tmpY;}
-    let rect = new cv.Rect(startX, startY, endX-startX, endY-startY);
-    dst = src.roi(rect);
-    cv.imshow('canvasSelected', dst);
-    src.delete();
-    dst.delete();
-}
+//     // 矩形選択
+//     let rect = new cv.Rect(point.startX,point.startY,point.toX,point.toY);
+//     dst = src.roi(rect);
+//     cv.imshow('canvasSelected', dst);
 
-function ocr(){
+
+//     src.delete();
+//     dst.delete();
+// }
+
+function ocr(element){
     Tesseract.recognize(
-        canvasSelectedElement,
+        element,
         'jpn',
         { logger: m => {progressOCRElement.value=m.progress;console.log(m);} }
         ).then(({ data: { text } }) => {
-            textareaElement.value=text;
+            textareaElement.value=textareaElement.value + '\n' + text;
         })
+}
+
+function executeOCR(){
+    for(i=0;i<canvasSelectedElements.length;i++){
+        ocr(canvasSelectedElements[i]);
+    }
 }

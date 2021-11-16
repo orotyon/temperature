@@ -6,12 +6,26 @@ body{
 }
 
 .canvas-wrapper {
+    /* width: 600px; */
+    max-width: 100%;
     position: relative;
+    padding: 0;
+    box-sizing: content-box;
+}
+.canvas-wrapper:before{
+    content:"";
+    display: block;
+    padding-top: 100%;
 }
 .canvas-wrapper canvas {
     position: absolute;
-    top: 0;
-    left: 0;
+    left:0;
+    top:0;
+    border: 0;
+    max-width:100%;
+    box-sizing: content-box;
+    padding: 0;
+    margin: 0;
 }
 
 .ocr-wrapper{
@@ -20,4 +34,7 @@ body{
 .ocroutput-wrapper{
     display:flex;
     flex-direction: column;
+}
+.ocroutput-wrapper progress{
+    width: 100%;
 }
