@@ -51,12 +51,43 @@ function createCanvasSelectedElement(point){
     this.mem_canvas = document.createElement("canvas");
     this.mem_canvas.width = point.toX;
     this.mem_canvas.height = point.toY;
+
+    let canvasidstr="canvasSelectedElements" + (canvasSelectedElements.length+1);
+    let textidstr="textSelectedElements" + (canvasSelectedElements.length+1);
+    let selectedidstr="divselectedElements" + (canvasSelectedElements.length+1);
+
+    this.mem_canvas.id = canvasidstr;
     cv.imshow(this.mem_canvas, dst);
     src.delete();
     dst.delete();
     canvasSelectedElements.push(mem_canvas);
-    // なんかエラーになる
-    // selectedDivElement.appendChild(mem_canvas);
+    // 選択済リスト
+    let ocrselecteddiv = document.createElement("div");
+    let zahyou = document.createElement("div");
+    let text = document.createElement("textarea");
+    let ocrbutton = document.createElement("input");
+    let delbutton = document.createElement("input");
+    ocrselecteddiv.className="ocrselected";
+    ocrselecteddiv.id=selectedidstr;
+    ocrbutton.type="button";
+    ocrbutton.value="a";
+    delbutton.type="button";
+    delbutton.value="x";
+    text.id=textidstr;
+
+    ocrbutton.onclick=new Function("executeOCR('"+canvasidstr+"','"+textidstr+"');");
+    delbutton.onclick=new Function("deleteSelected('"+selectedidstr+"');");
+
+    zahyou.innerHTML = "startX=" + point.startX + ":startY=" + point.startY + ":endX=" + point.endX + ":endY" + point.endY;
+    ocrselecteddiv.appendChild(mem_canvas);
+    ocrselecteddiv.appendChild(zahyou);
+    ocrselecteddiv.appendChild(text);
+    ocrselecteddiv.appendChild(ocrbutton);
+    ocrselecteddiv.appendChild(delbutton);
+
+    selectedDivElement.appendChild(ocrselecteddiv);
+    
+
 }
 
 inputElement.addEventListener("change", (e) =>{
@@ -89,8 +120,6 @@ canvasLayerElement.addEventListener('mouseup', (e) =>{
     point=new canvasPoint(startX,startY,endX,endY);
     createCanvasSelectedElement(point);
     canvasPoints.push(point);
-    // copySelectedArea()
-    // ocr();
 }, false);
 canvasLayerElement.addEventListener('mousemove', (e) =>{
     if(onMouse==true){
@@ -148,18 +177,32 @@ function draw(element,x,y){
 //     dst.delete();
 // }
 
-function ocr(element){
+function ocr(element,textarea=textareaElement){
     Tesseract.recognize(
         element,
         'jpn',
         { logger: m => {progressOCRElement.value=m.progress;console.log(m);} }
         ).then(({ data: { text } }) => {
-            textareaElement.value=textareaElement.value + '\n' + text;
+            textarea.value=textarea.value + '\n' + text;
         })
 }
 
-function executeOCR(){
+function executeAllOCR(){
+    textareaElement.value="";
     for(i=0;i<canvasSelectedElements.length;i++){
         ocr(canvasSelectedElements[i]);
     }
+}
+function executeOCR(canvasid,outputid){
+    console.log(canvasid + ":" + outputid);
+    const canvaselement = document.getElementById(canvasid);
+    const textareaelement = document.getElementById(outputid);
+    // this.textareaelement.value="";
+    ocr(canvaselement,textareaelement);
+}
+function deleteSelected(divid){
+    console.log(divid);
+    const element = document.getElementById(divid);
+
+    element.remove();
 }

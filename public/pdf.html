@@ -8,18 +8,19 @@
 </head>
 <body>
     <h1>PDFテスト</h1>
-    <p id="status">OpenCV.js を 読み込んでいます...</p>
-
-    <img id="imageSrc" alt="No Image" hidden/>
-    <div class="caption"><input type="file" id="fileInput" name="file" /></div>
     <!-- OCR用 -->
     <div class="ocr-wrapper">
         <div class="ocroutput-wrapper">
-            <input type="button" value="OCR実行" onclick="executeOCR()">
+            <p id="status">OpenCV.js を 読み込んでいます...</p>
+
+            <img id="imageSrc" alt="No Image" hidden/>
+            <div class="caption"><input type="file" id="fileInput" name="file" /></div>
+                    <input type="button" value="OCR実行" onclick="executeAllOCR()">
             <textarea name="ocrOutput" id="textareaOutput" cols="60" rows="5"></textarea>
             <progress value="0.0"max="1"id="progressOCR"></progress>
         </div>
-        <div id="ocrselected-list"></div>
+        <div id="ocrselected-list">
+        </div>
     </div>
     <hr>
     <div class="canvas-wrapper">

@@ -38,3 +38,9 @@ body{
 .ocroutput-wrapper progress{
     width: 100%;
 }
+#ocrselected-list{
+    background-color: blue;
+}
+.ocrselected{
+    display: flex;
+}
